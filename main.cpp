@@ -4,6 +4,8 @@
 
 int main() {
 
+    auto start = std::chrono::steady_clock::now();
+
     // Считываем входные строки
     size_t number;
     std::cin >> number;
@@ -35,4 +37,8 @@ int main() {
 
     // Конкатенация всех подстрок
     std::cout << SplitString(vector_string_cycle) << std::endl;
+
+    auto finish = std::chrono::steady_clock::now();
+    auto time = finish - start;
+    std::cout << std::chrono::duration_cast <std::chrono::milliseconds>(time).count() << std::endl;
 }
