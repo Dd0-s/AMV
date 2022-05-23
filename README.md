@@ -1,1 +1,1 @@
-# My works
+# NP - complete problem from bioinformatics
