@@ -1,14 +1,13 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include "vector"
 #include "Graph.h"
 
-std::vector <size_t> prefix_function(const std::string &str){ // Префикс функция строки
+std::vector <size_t> PrefixFunction(const std::string &str){ // Префикс функция строки
     std::vector<size_t> prefix (str.size(), 0);
     for (size_t i = 1; i < str.size(); i++) {
-        int j = prefix[i - 1];
+        size_t j = prefix[i - 1];
         while (j > 0 && str[i] != str[j]){
             j = prefix[j - 1];
         }
@@ -20,13 +19,58 @@ std::vector <size_t> prefix_function(const std::string &str){ // Префикс 
     return prefix;
 }
 
-size_t overlap(const std::string &s_1, const std::string &s_2) { // Overlap функций
+size_t Overlap(const std::string &s_1, const std::string &s_2) { // Overlap двух строк
     std::string general_string = s_2 + s_1;
-    std::vector <size_t> prefix = prefix_function(general_string);
+    std::vector <size_t> prefix = PrefixFunction(general_string);
     return prefix[prefix.size() - 1];
 }
 
-std::vector <std::vector <size_t>> MinCycles(std::vector <size_t> &assigment){ // Покрытие циклами
+std::vector <size_t> GreedyAssignment(const Graph &graph_adjacencies){ // Вычисления полного назначения жадным методом
+    size_t size_matrix = graph_adjacencies.Size();
+    std::vector <std::vector <bool>> not_allow (size_matrix, std::vector <bool> (size_matrix, false)) ;
+    std::vector <size_t> assignment (size_matrix,0);
+    while (true)
+    {
+        int max = -1;
+        size_t max_i = 0, max_j = 0;
+        bool flag = false;
+        for (size_t i = 0; i < size_matrix; i++)
+        {
+            for (size_t j = 0; j < size_matrix; j++)
+            {
+                if (not_allow[i][j]){
+                    continue;
+                }
+                if (static_cast <int>(graph_adjacencies.GetEdgesFrom(i)[j]) >= max)
+                {
+                    if (!flag){
+                        max = static_cast <int> (graph_adjacencies.GetEdgesFrom(i)[j]);
+                        max_i = i;
+                        max_j = j;
+                    }
+                    if(assignment[j] == 0){
+                        max = static_cast <int> (graph_adjacencies.GetEdgesFrom(i)[j]);
+                        max_i = i;
+                        max_j = j;
+                        flag = true;
+                    }
+                }
+            }
+        }
+        if (max == -1){
+            break;
+        }
+        assignment[max_i] = max_j;
+        for (size_t i = 0; i < size_matrix; i++)
+        {
+            not_allow[max_i][i] = true;
+            not_allow[i][max_j] = true;
+        }
+    }
+    return assignment;
+}
+
+std::vector <std::vector <size_t>> MinCycles(std::vector <size_t> &assigment){ // Покрытие циклами минимальной длины
     std::vector <std::vector <size_t>> cycles;
     std::vector <size_t> cycle;
     std::vector <bool> mark (assigment.size(), false);
@@ -49,45 +93,45 @@ std::vector <std::vector <size_t>> MinCycles(std::vector <size_t> &assigment){ /
     return cycles;
 }
 
-std::string prefix(std::string &s1, int delta) // Обрезает входную строку на overlap(s1, s2)
+std::string Prefix(std::string &s1, size_t delta) // Обрезает входную строку на delta = overlap(s1, s2)
 {
     return s1.substr(0, s1.length() - delta);
 }
 
-std::vector <std::string> MinOverlap(std::vector <std::vector <size_t>> &cycles, Graph &matrix, std::vector<std::string> strings_vector) { // Минимизация overlap первой и последней строки в цикле
-    std::vector <std::string> super_strings(cycles.size());
+std::vector <std::string> MinOverlap(std::vector <std::vector <size_t>> &cycles, Graph &graph_adjacencies, std::vector<std::string> &strings_vector) { // Минимизация overlap первой и последней строки в цикле
+    std::vector <std::string> vector_string_cycle(cycles.size());
     for (auto j: cycles) {
-        std::string str;
-        std::vector <size_t> ovs;
+        std::string string_cycle;
+        std::vector <size_t> cycle_overlap;
         for (size_t i = 0; i < j.size() - 1; i++) {
-            ovs.push_back(matrix.GetEdgesFrom(j[i])[j[i + 1]]);
+            cycle_overlap.push_back(graph_adjacencies.GetEdgesFrom(j[i])[j[i + 1]]);
         }
-        int min = matrix.GetEdgesFrom(j[j.size() - 1])[j[0]];
-        int shift = 0;
-        for (size_t i = 0; i < ovs.size(); i++)
-            if (ovs[i] < min) {
-                min = ovs[i];
+        size_t min = graph_adjacencies.GetEdgesFrom(j[j.size() - 1])[j[0]];
+        size_t shift = 0;
+        for (size_t i = 0; i < cycle_overlap.size(); i++)
+            if (cycle_overlap[i] < min) {
+                min = cycle_overlap[i];
                 shift = i + 1;
             }
-        std::vector <size_t> help(j.size());
+        std::vector <size_t> vector_shift(j.size());
         for (size_t i = 0; i < j.size(); i++) {
-            help[(i + shift) % j.size()] = j[i];
+            vector_shift[(i + shift) % j.size()] = j[i];
         }
-        j = help;
+        j = vector_shift;
         for (int i = 0; i < j.size() - 1; i++) {
-            str += prefix(strings_vector[j[i]], matrix.GetEdgesFrom(j[i])[j[i + 1]]);
+            string_cycle += Prefix(strings_vector[j[i]], graph_adjacencies.GetEdgesFrom(j[i])[j[i + 1]]);
         }
-        str += strings_vector[j[j.size() - 1]];
-        super_strings.push_back(str);
+        string_cycle += strings_vector[j[j.size() - 1]];
+        vector_string_cycle.push_back(string_cycle);
     }
-    return super_strings;
+    return vector_string_cycle;
 }
 
-std::string SplitString(const std::vector <std::string> &super_string){ // Конкатенация всех подстрок
-    std::string answer;
-    for (const auto& str : super_string){
-        answer += str;
+std::string SplitString(const std::vector <std::string> &vector_string_cycle){ // Конкатенация строк вектор
+    std::string result;
+    for (const auto& str : vector_string_cycle){
+        result += str;
     }
-    return answer;
+    return result;
 }
 

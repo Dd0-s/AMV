@@ -10,8 +10,6 @@ private:
 public:
     explicit Graph(size_t size); // Конструктор
     void AddEdge(size_t from, size_t to, size_t length); // Добавление ребра
-    size_t Size() const; // Размер таблицы смежности
+    size_t Size() const; // Размер матрицы смежности
     std::vector<size_t> GetEdgesFrom(size_t from) const; // Возвращение списка смежности вершины
 };
-
-std::vector <size_t> GreedyAssignment(const Graph &matrix); // Вычисления полного назначения

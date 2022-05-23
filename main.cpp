@@ -2,37 +2,37 @@
 #include "Graph.h"
 #include "Functions.h"
 
-int main() { // cde abc eab fgh ghf hed
+int main() {
 
     // Считываем входные строки
-    int number;
+    size_t number;
     std::cin >> number;
-    std::vector<std::string> strings_vector(number);
+    std::vector <std::string> strings_vector(number);
     for (size_t i = 0; i < number; ++i) {
         std::cin >> strings_vector[i];
     }
 
     // Заполняем матрицу смежности
-    Graph adjacencies(number);
+    Graph graph_adjacencies(number);
     for (size_t i = 0; i < number; i++) {
         for (size_t j = 0; j < number; j++) {
             if (i == j) {
-                adjacencies.AddEdge(i, j, 0);
+                graph_adjacencies.AddEdge(i, j, 0);
             } else {
-                adjacencies.AddEdge(i, j, overlap(strings_vector[i], strings_vector[j]));
+                graph_adjacencies.AddEdge(i, j, Overlap(strings_vector[i], strings_vector[j]));
             }
         }
     }
 
-    // Вычисляем полное назначение
-    std::vector <size_t> assigment = GreedyAssignment(adjacencies);
+    // Вычисляем полное назначение жадным методом
+    std::vector <size_t> assigment = GreedyAssignment(graph_adjacencies);
 
-    // Покрытие циклами
+    // Покрытие циклами минимальной длины
     std::vector <std::vector <size_t>> cycles = MinCycles(assigment);
 
     // Минимизация overlap первой и последней строки в цикле
-    std::vector <std::string> super_strings = MinOverlap(cycles, adjacencies, strings_vector);
+    std::vector <std::string> vector_string_cycle = MinOverlap(cycles, graph_adjacencies, strings_vector);
 
     // Конкатенация всех подстрок
-    std::cout << SplitString(super_strings) << std::endl;
+    std::cout << SplitString(vector_string_cycle) << std::endl;
 }
