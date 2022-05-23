@@ -19,8 +19,8 @@ std::vector <size_t> PrefixFunction(const std::string &str){ // Префикс �
     return prefix;
 }
 
-size_t Overlap(const std::string &s_1, const std::string &s_2) { // Overlap двух строк
-    std::string general_string = s_2 + s_1;
+size_t Overlap(const std::string &s1, const std::string &s2) { // Overlap двух строк
+    std::string general_string = s2 + s1;
     std::vector <size_t> prefix = PrefixFunction(general_string);
     return prefix[prefix.size() - 1];
 }
@@ -99,7 +99,7 @@ std::string Prefix(std::string &s1, size_t delta) // Обрезает входн
 }
 
 std::vector <std::string> MinOverlap(std::vector <std::vector <size_t>> &cycles, Graph &graph_adjacencies, std::vector<std::string> &strings_vector) { // Минимизация overlap первой и последней строки в цикле
-    std::vector <std::string> vector_string_cycle(cycles.size());
+    std::vector <std::string> vector_string_cycle;
     for (auto j: cycles) {
         std::string string_cycle;
         std::vector <size_t> cycle_overlap;
@@ -118,7 +118,7 @@ std::vector <std::string> MinOverlap(std::vector <std::vector <size_t>> &cycles,
             vector_shift[(i + shift) % j.size()] = j[i];
         }
         j = vector_shift;
-        for (int i = 0; i < j.size() - 1; i++) {
+        for (size_t i = 0; i < j.size() - 1; i++) {
             string_cycle += Prefix(strings_vector[j[i]], graph_adjacencies.GetEdgesFrom(j[i])[j[i + 1]]);
         }
         string_cycle += strings_vector[j[j.size() - 1]];

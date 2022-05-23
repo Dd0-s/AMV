@@ -4,8 +4,6 @@
 
 int main() {
 
-    auto start = std::chrono::steady_clock::now();
-
     // Считываем входные строки
     size_t number;
     std::cin >> number;
@@ -13,6 +11,9 @@ int main() {
     for (size_t i = 0; i < number; ++i) {
         std::cin >> strings_vector[i];
     }
+
+    // Отсчет времени
+    auto start = std::chrono::steady_clock::now();
 
     // Заполняем матрицу смежности
     Graph graph_adjacencies(number);
@@ -38,6 +39,7 @@ int main() {
     // Конкатенация всех подстрок
     std::cout << SplitString(vector_string_cycle) << std::endl;
 
+    // Время работы
     auto finish = std::chrono::steady_clock::now();
     auto time = finish - start;
     std::cout << std::chrono::duration_cast <std::chrono::milliseconds>(time).count() << std::endl;
