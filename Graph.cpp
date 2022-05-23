@@ -1,6 +1,6 @@
 #pragma once
 #include "Graph.h"
-
+#include <iostream>
 Graph::Graph(size_t size_){ // Конструктор
     size = size_;
     madjacencies_matrix = std::vector <std::vector <std::size_t>> (size_, std::vector <std::size_t> (size_, 0));
@@ -26,6 +26,7 @@ std::vector <size_t> GreedyAssignment(const Graph &matrix){ // Вычислен�
     {
         int max = -1;
         size_t max_i = 0, max_j = 0;
+        bool flag = false;
         for (size_t i = 0; i < size_graph; i++)
         {
             for (size_t j = 0; j < size_graph; j++)
@@ -33,11 +34,19 @@ std::vector <size_t> GreedyAssignment(const Graph &matrix){ // Вычислен�
                 if (not_allow[i][j]){
                     continue;
                 }
-                if (static_cast<int>(matrix.GetEdgesFrom(i)[j]) > max)
+                if (static_cast <int>(matrix.GetEdgesFrom(i)[j]) >= max)
                 {
-                    max = matrix.GetEdgesFrom(i)[j];
-                    max_i = i;
-                    max_j = j;
+                    if (!flag){
+                        max = matrix.GetEdgesFrom(i)[j];
+                        max_i = i;
+                        max_j = j;
+                    }
+                    if(assignment[j] == 0){
+                        max = matrix.GetEdgesFrom(i)[j];
+                        max_i = i;
+                        max_j = j;
+                        flag = true;
+                    }
                 }
             }
         }

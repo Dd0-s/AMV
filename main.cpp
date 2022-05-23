@@ -26,7 +26,13 @@ int main() { // cde abc eab fgh ghf hed
 
     // Вычисляем полное назначение
     std::vector <size_t> assigment = GreedyAssignment(adjacencies);
+
+    // Покрытие циклами
     std::vector <std::vector <size_t>> cycles = MinCycles(assigment);
+
+    // Минимизация overlap первой и последней строки в цикле
     std::vector <std::string> super_strings = MinOverlap(cycles, adjacencies, strings_vector);
+
+    // Конкатенация всех подстрок
     std::cout << SplitString(super_strings) << std::endl;
 }

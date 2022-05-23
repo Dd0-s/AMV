@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include "vector"
 #include "Graph.h"
@@ -48,28 +49,28 @@ std::vector <std::vector <size_t>> MinCycles(std::vector <size_t> &assigment){ /
     return cycles;
 }
 
-std::string prefix(std::string s1, int delta) // Обрезает входную строку на overlap(s1, s2)
+std::string prefix(std::string &s1, int delta) // Обрезает входную строку на overlap(s1, s2)
 {
     return s1.substr(0, s1.length() - delta);
 }
 
 std::vector <std::string> MinOverlap(std::vector <std::vector <size_t>> &cycles, Graph &matrix, std::vector<std::string> strings_vector) { // Минимизация overlap первой и последней строки в цикле
-    std::vector<std::string> super_strings(cycles.size());
+    std::vector <std::string> super_strings(cycles.size());
     for (auto j: cycles) {
-        std::string str = "";
-        std::vector<size_t> ovs(j.size() - 1);
-        for (int i = 0; i < j.size() - 1; i++) {
+        std::string str;
+        std::vector <size_t> ovs;
+        for (size_t i = 0; i < j.size() - 1; i++) {
             ovs.push_back(matrix.GetEdgesFrom(j[i])[j[i + 1]]);
         }
         int min = matrix.GetEdgesFrom(j[j.size() - 1])[j[0]];
         int shift = 0;
-        for (int i = 0; i < ovs.size(); i++)
+        for (size_t i = 0; i < ovs.size(); i++)
             if (ovs[i] < min) {
                 min = ovs[i];
                 shift = i + 1;
             }
-        std::vector<size_t> help(j.size());
-        for (int i = 0; i < j.size(); i++) {
+        std::vector <size_t> help(j.size());
+        for (size_t i = 0; i < j.size(); i++) {
             help[(i + shift) % j.size()] = j[i];
         }
         j = help;
@@ -82,9 +83,9 @@ std::vector <std::string> MinOverlap(std::vector <std::vector <size_t>> &cycles,
     return super_strings;
 }
 
-std::string SplitString(const std::vector <std::string> &super_string){ // Конкатенация всех надстрок из superstrings
-    std::string answer = "";
-    for (auto str : super_string){
+std::string SplitString(const std::vector <std::string> &super_string){ // Конкатенация всех подстрок
+    std::string answer;
+    for (const auto& str : super_string){
         answer += str;
     }
     return answer;
